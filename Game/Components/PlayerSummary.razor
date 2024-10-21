@@ -1,0 +1,15 @@
+﻿@using Game.Data.Models
+@inject NewGame game
+<div>
+    <p>Chest:</p>
+    <p>Chest Cap: @game.Player.Chest.ResourceCap Items</p>
+
+    @foreach(var item in game.Player.Chest.Resources)
+    {
+        <ResourceSummary Resource="item" />
+    }
+</div>
+
+
+@code {
+}

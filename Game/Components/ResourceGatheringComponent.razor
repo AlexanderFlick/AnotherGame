@@ -1,0 +1,37 @@
+﻿@using Game.Data.Models
+@using Game.Data.Models.Resources
+@rendermode InteractiveServer
+@inject NewGame Game
+
+<div class="card resource-gather">
+    <h4>@Resource.Name</h4>
+    <p>Quantity Per Click: @Resource.Value</p>
+    <button style="width:100%;" class="btn btn-primary" @onclick="GatherResource">@Resource.Name</button>
+</div>
+
+<style>
+    .resource-gather {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-left: 20px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        padding-right: 20px;
+        text-align: center;
+    }
+</style>
+
+@code {
+    [Parameter]
+    public Resource Resource { get; set; }
+
+    public void GatherResource()
+    {
+        if(Game.Player.Chest.Resources.Count < Game.Player.Chest.ResourceCap)
+        {
+            Game.Player.Chest.Resources.Add(Resource);
+            Game.OnStateChanged();
+        }
+    }
+}
