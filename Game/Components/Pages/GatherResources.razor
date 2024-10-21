@@ -9,7 +9,7 @@
         <p>Chest Storage: @Game.Player.Chest.Resources.Count/@Game.Player.Chest.ResourceCap</p>
     </div>
 
-    @foreach(var availableResource in Game.Player.UnlockedResources)
+    @foreach(var availableResource in Game.Player.Resources)
     {
         <ResourceGatheringComponent Resource="availableResource" />
     }

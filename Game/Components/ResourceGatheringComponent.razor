@@ -5,8 +5,9 @@
 
 <div class="card resource-gather">
     <h4>@Resource.Name</h4>
-    <p>Quantity Per Click: @Resource.Value</p>
-    <button style="width:100%;" class="btn btn-primary" @onclick="GatherResource">@Resource.Name</button>
+    <p>Gold Per Resource: @Resource.Value</p>
+    <p>Quantity Per Click: @Resource.QuantityPerClick</p>
+    <button style="width:100%;" class="btn btn-primary" @onclick="GatherResource">Gather</button>
 </div>
 
 <style>

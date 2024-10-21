@@ -1,24 +1,27 @@
 ﻿@using Game.Data.Models
 @using Game.Data.Models.Resources
 @inject NewGame Game
+@rendermode InteractiveServer
 
 <div style="text-align:center;">
-    <h1>Chest</h1>
+    <h3>Chest</h3>
     <p>Chest Storage: @Game.Player.Chest.Resources.Count/@Game.Player.Chest.ResourceCap</p>
     <div>
         <table style="width:100%;">
             <tr>
                 <th>Name</th>
                 <th>Value</th>
+                <th>Total</th>
                 <th></th>
             </tr>
-            @foreach (var item in Game.Player.Chest.Resources)
+            @foreach (var summary in ItemSummaries)
             {
                 <tr style="padding-bottom:20px;">
-                    <td>@item.Name</td>
-                    <td>@item.Value</td>
+                    <td>@summary.Item.Name</td>
+                    <td>@summary.Item.Value</td>
+                    <td>@summary.TotalResource</td>
                     <td>
-                        <button class="btn btn-danger" @onclick="(() => DeleteResource(item))">Delete</button>
+                        <button class="btn btn-danger" @onclick="(() => DeleteResource(summary.Item))">Delete 1 @summary.Item.Name</button>
                     </td>
                 </tr>
             }
@@ -28,9 +31,41 @@
 
 
 @code {
+    public List<ItemSummary> ItemSummaries { get; set; } = [];
+
+    protected override void OnInitialized()
+    {
+        foreach(var item in Game.Player.Chest.Resources)
+        {
+            var itemExists = false;
+
+            foreach(var summary in ItemSummaries)
+            {
+                if(summary.Item.Name == item.Name)
+                {
+                    itemExists = true;
+                    summary.TotalResource++;
+                }
+            }
+
+            if (!itemExists)
+            {
+                ItemSummaries.Add(new ItemSummary
+                    {
+                        Item = item,
+                        TotalResource = 1
+                    });
+            }
+        }
+    }
+
     public void DeleteResource(Resource item)
     {
         Game.Player.Chest.Resources.Remove(item);
+
+        var itemSummaryToDecrement = ItemSummaries.Where(x => x.Item == item).First();
+        itemSummaryToDecrement.TotalResource--;
+
         Game.OnStateChanged = StateHasChanged;
     }
 }

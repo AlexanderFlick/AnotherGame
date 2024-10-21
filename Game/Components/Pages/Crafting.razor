@@ -1,0 +1,19 @@
+﻿@page "/crafting"
+@using Game.Data.Models
+@inject NewGame Game
+
+<div style="text-align:center;">
+    <h1>Crafting</h1>
+    @foreach(var recipe in Game.Player.Recipes)
+    {
+        <CraftingResourceComponent ItemToCraft="recipe"/>
+    }
+
+    <br />
+    <ChestSummary />
+</div>
+
+
+@code {
+
+}

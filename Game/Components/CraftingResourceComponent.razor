@@ -1,0 +1,66 @@
+﻿@using Game.Data.Models
+@using Game.Data.Models.Resources
+@using static Game.Components.ChestSummary
+@rendermode InteractiveServer
+@inject NewGame Game
+
+<div class="card resource-crafting">
+    <h4>@ItemToCraft.Name</h4>
+    <p>Gold Value: @ItemToCraft.Value</p>
+    @foreach (var item in ItemSummaries)
+    {
+        <p>@item.Item.Name: @item.TotalResource</p>
+    }
+    <button class="btn btn-primary" style="width:100%" @onclick="() => CraftItem(ItemToCraft)">Craft</button>
+</div>
+
+<style>
+    .resource-crafting {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-left: 20px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        padding-right: 20px;
+        text-align: center;
+    }
+</style>
+
+@code {
+    [Parameter]
+    public Resource ItemToCraft { get; set; }
+
+    public List<ItemSummary> ItemSummaries { get; set; } = [];
+
+    protected override void OnInitialized()
+    {
+        foreach (var item in ItemToCraft.CostToCraft)
+        {
+            var itemExists = false;
+
+            foreach (var summary in ItemSummaries)
+            {
+                if (summary.Item.Name == item.Name)
+                {
+                    itemExists = true;
+                    summary.TotalResource++;
+                }
+            }
+
+            if (!itemExists)
+            {
+                ItemSummaries.Add(new ItemSummary
+                    {
+                        Item = item,
+                        TotalResource = 1
+                    });
+            }
+        }
+    }
+
+    private void CraftItem(Resource itemToCraft)
+    {
+
+    }
+}
