@@ -1,6 +1,6 @@
 ﻿namespace Game.Data.Models.Resources;
 
-public class Stone : Resource
+public class Stone : Resource, Item
 {
     public Stone()
     {

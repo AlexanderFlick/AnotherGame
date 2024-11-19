@@ -10,5 +10,5 @@ public class Chest
     }
 
     public int ResourceCap { get; set; }
-    public List<Resource> Resources { get; set; } = [];
+    public List<Item> Resources { get; set; } = [];
 }
