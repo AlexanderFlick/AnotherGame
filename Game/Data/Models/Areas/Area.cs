@@ -5,5 +5,8 @@ namespace Game.Data.Models.Areas;
 public class Area
 {
     public string Name { get; set; }
-    public List<Resource> AvailableResources { get; set; }
+    public List<Resource> AvailableResources { get; set; } = [];
+    public List<Resource> CostToTravel { get; set; } = [];
+    public bool Visiting { get; set; }
+    public bool FirstTrip { get; set; }
 }

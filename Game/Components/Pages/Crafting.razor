@@ -1,9 +1,10 @@
 ﻿@page "/crafting"
 @using Game.Data.Models
+@rendermode InteractiveServer
 @inject NewGame Game
 
 <div style="text-align:center;">
-    <h1>Crafting</h1>
+    <h2>Recipes</h2>
     @foreach(var recipe in Game.Player.Recipes)
     {
         <CraftingResourceComponent ItemToCraft="recipe"/>
@@ -15,5 +16,8 @@
 
 
 @code {
-
+    protected override void OnInitialized()
+    {
+        Game.OnStateChanged = StateHasChanged;
+    }
 }

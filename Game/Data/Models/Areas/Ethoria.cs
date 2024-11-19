@@ -8,5 +8,6 @@ public class Ethoria : Area
     {
         Name = "Fields Of Ethoria";
         AvailableResources = [new Wood(), new Stone()];
+        CostToTravel = [new Plank(), new Plank()];
     }
 }

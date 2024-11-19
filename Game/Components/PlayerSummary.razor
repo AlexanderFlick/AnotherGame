@@ -1,10 +1,12 @@
 ﻿@using Game.Data.Models
-@inject NewGame game
+@rendermode InteractiveServer
+@inject NewGame Game
+
 <div>
     <p>Chest:</p>
-    <p>Chest Cap: @game.Player.Chest.ResourceCap Items</p>
+    <p>Chest Cap: @Game.Player.Chest.ResourceCap Items</p>
 
-    @foreach(var item in game.Player.Chest.Resources)
+    @foreach(var item in Game.Player.Chest.Resources)
     {
         <ResourceSummary Resource="item" />
     }
@@ -12,4 +14,8 @@
 
 
 @code {
+    protected override void OnInitialized()
+    {
+        Game.OnStateChanged = StateHasChanged;
+    }
 }

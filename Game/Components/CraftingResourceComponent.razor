@@ -3,64 +3,153 @@
 @using static Game.Components.ChestSummary
 @rendermode InteractiveServer
 @inject NewGame Game
+@inject NavigationManager NavManager
 
-<div class="card resource-crafting">
-    <h4>@ItemToCraft.Name</h4>
-    <p>Gold Value: @ItemToCraft.Value</p>
-    @foreach (var item in ItemSummaries)
-    {
-        <p>@item.Item.Name: @item.TotalResource</p>
-    }
-    <button class="btn btn-primary" style="width:100%" @onclick="() => CraftItem(ItemToCraft)">Craft</button>
+<div class="card resource-crafting" style="width:400px;">
+	<h4>@ItemToCraft.Name</h4>
+	<p>Gold Value: @ItemToCraft.Value</p>
+	@foreach (var item in ItemSummaries)
+	{
+		<p>@item.Item.Name Cost: @item.TotalResource</p>
+	}
+
+	<div style="width:100%; padding-bottom:20px;">
+		@if (CriteriaMet)
+		{
+			<p>&#10004; Resource Available </p>
+		}
+
+		@if (!CriteriaMet)
+		{
+			<p>Not enough resources to craft this item.</p>
+			<button class="btn btn-secondary" style="width:100%" @onclick="RedirectToResource">Get Resources</button>
+		}
+	</div>
+
+	<button class="btn btn-primary" style="width:100%;" disabled="@(CriteriaMet == false)" @onclick="() => CraftItem(ItemToCraft)">Craft</button>
 </div>
 
 <style>
-    .resource-crafting {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding-left: 20px;
-        padding-top: 20px;
-        padding-bottom: 20px;
-        padding-right: 20px;
-        text-align: center;
-    }
+	.resource-crafting {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding-left: 20px;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	padding-right: 20px;
+	text-align: center;
+	}
 </style>
 
 @code {
-    [Parameter]
-    public Resource ItemToCraft { get; set; }
+	[Parameter]
+	public Resource ItemToCraft { get; set; }
 
-    public List<ItemSummary> ItemSummaries { get; set; } = [];
+	public List<ItemSummary> ItemSummaries { get; set; } = [];
 
-    protected override void OnInitialized()
-    {
-        foreach (var item in ItemToCraft.CostToCraft)
-        {
-            var itemExists = false;
+	public bool CriteriaMet { get; set; }
 
-            foreach (var summary in ItemSummaries)
-            {
-                if (summary.Item.Name == item.Name)
-                {
-                    itemExists = true;
-                    summary.TotalResource++;
-                }
-            }
+	protected override void OnInitialized()
+	{
+		Game.OnStateChanged = () =>
+		{
+			UpdateItemSummaries();
+			CheckChestIfHaveEnoughToPurchase();
+			StateHasChanged();
+		};
 
-            if (!itemExists)
-            {
-                ItemSummaries.Add(new ItemSummary
-                    {
-                        Item = item,
-                        TotalResource = 1
-                    });
-            }
-        }
-    }
+		UpdateItemSummaries();
+		CheckChestIfHaveEnoughToPurchase();
+	}
 
-    private void CraftItem(Resource itemToCraft)
-    {
+	private void UpdateItemSummaries()
+	{
+		ItemSummaries.Clear();
 
-    }
+		foreach (var item in ItemToCraft.CostToCraft)
+		{
+			var itemExists = false;
+
+			foreach (var summary in ItemSummaries)
+			{
+				if (summary.Item.Name == item.Name)
+				{
+					itemExists = true;
+					summary.TotalResource++;
+				}
+			}
+
+			if (!itemExists)
+			{
+				ItemSummaries.Add(new ItemSummary
+					{
+						Item = item,
+						TotalResource = 1
+					});
+			}
+		}
+	}
+
+	private void CraftItem(Resource itemToCraft)
+	{
+		var canAfford = true;
+
+		var playerChest = new Chest();
+		foreach (var resource in Game.Player.Chest.Resources)
+		{
+			playerChest.Resources.Add(resource);
+		}
+
+		foreach (var resource in itemToCraft.CostToCraft)
+		{
+			var resourceToRemove = playerChest.Resources.FirstOrDefault(x => x.Name == resource.Name);
+
+			if (resourceToRemove is not null)
+			{
+				playerChest.Resources.Remove(resourceToRemove);
+			}
+			else
+			{
+				canAfford = false;
+			}
+		}
+
+		if (canAfford)
+		{
+			foreach (var resource in itemToCraft.CostToCraft)
+			{
+				var resourceToRemove = Game.Player.Chest.Resources.First(x => x.Name == resource.Name);
+				Game.Player.Chest.Resources.Remove(resourceToRemove);
+			}
+
+			Game.Player.Chest.Resources.Add(itemToCraft);
+
+			CheckChestIfHaveEnoughToPurchase();
+
+			Game.OnStateChanged?.Invoke();
+		}
+	}
+
+	private void CheckChestIfHaveEnoughToPurchase()
+	{
+		CriteriaMet = true;
+
+		foreach (var resource in ItemToCraft.CostToCraft)
+		{
+			var totalAvailable = Game.Player.Chest.Resources.Count(r => r.Name == resource.Name);
+
+			if (totalAvailable < 1)
+			{
+				CriteriaMet = false;
+				break;
+			}
+		}
+	}
+
+
+	private void RedirectToResource()
+	{
+		NavManager.NavigateTo("/gather");
+	}
 }

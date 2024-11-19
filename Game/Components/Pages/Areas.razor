@@ -1,10 +1,101 @@
 ﻿@page "/areas"
+@using Game.Data.Models
+@using Game.Data.Models.Areas
+@using System.Text
+@using Game.Data.Models.Resources
+@rendermode InteractiveServer
+@inject NewGame Game
 
 <div>
-    <h3>Areas</h3>
+	@foreach (var area in Game.Player.Areas)
+	{
+		<div class="card" style="text-align:center; padding:20px; margin:20px; width:400px;">
+			<h3>@area.Name</h3>
+			<p>@AreaResourceDescription[area.Name]</p>
+			<p>@AreaCostToTravel[area.Name]</p>
+
+			@if (area.Visiting)
+			{
+				<button class="btn btn-primary disabled">Visiting!</button>
+			}
+
+			@if (!area.Visiting)
+			{
+				<button class="btn btn-primary" @onclick="() => TravelToArea(area)">Travel</button>
+			}
+		</div>
+	}
 </div>
 
 
 @code {
+	private Dictionary<string, string> AreaResourceDescription { get; set; }
+	private Dictionary<string, string> AreaCostToTravel { get; set; }
 
+	protected override void OnInitialized()
+	{
+		SetResourcesAvailableInArea();
+		SetCostToTravel();
+	}
+
+	private void SetCostToTravel()
+	{
+		AreaCostToTravel = new();
+		var sb = new StringBuilder();
+
+		foreach (var area in Game.Player.Areas)
+		{
+			sb.Append("Cost to  Travel: ");
+			sb.Append(SetCostDescription(area));
+			AreaCostToTravel.Add(area.Name, sb.ToString());
+			sb.Clear();
+		}
+	}
+
+	private string SetCostDescription(Area area)
+	{
+		var sb = new StringBuilder();
+		var distinctAreaItems = area.CostToTravel.Select(x => x.Name).Distinct();
+
+		if (distinctAreaItems.Count() < 1)
+		{
+			return sb.Append("Free").ToString();
+		}
+
+		var firstItem = true;
+		foreach (var distinctItem in distinctAreaItems)
+		{
+			var quantityOfItem = area.CostToTravel.Count(x => x.Name == distinctItem);
+
+			if (!firstItem) { sb.Append(","); }
+			sb.Append($" {quantityOfItem} {distinctItem}s");
+			firstItem = false;
+		}
+
+		return sb.ToString();
+	}
+
+	private void SetResourcesAvailableInArea()
+	{
+		AreaResourceDescription = new();
+		var sb = new StringBuilder();
+
+		foreach (var area in Game.Player.Areas)
+		{
+			sb.Append("Resources at Island: ");
+			foreach (var resource in area.AvailableResources)
+			{
+				sb.Append($" {resource.Name};");
+			}
+
+			AreaResourceDescription.Add(area.Name, sb.ToString());
+			sb.Clear();
+		}
+	}
+
+	private void TravelToArea(Area area)
+	{
+		Game.Player.Resources.Clear();
+		Game.Player.Resources = area.AvailableResources;
+	}
 }
