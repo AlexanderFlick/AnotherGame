@@ -1,4 +1,5 @@
-﻿using Game.Data.Models.Areas;
+﻿using Game.Components.Pages;
+using Game.Data.Models.Areas;
 using Game.Data.Models.Resources;
 
 namespace Game.Data.Models;
@@ -17,8 +18,7 @@ public class Player
         Chest = new Chest();
         Town = new Town { Population = 1 };
         Recipes.Add(new Plank());
-        Areas.Add(new BeginnerIsland { Visiting = true });
-        Areas.Add(new Ethoria());
+        Areas = SetAreas();
     }
 
     public string Name { get; set; }
@@ -28,4 +28,25 @@ public class Player
     public List<Resource> Resources { get; set; } = [];
     public List<Resource> Recipes { get; set; } = [];
     public List<Area> Areas { get; set; } = [];
+
+    public List<Area> SetAreas()
+    {
+        var areas = new List<Area>
+        {
+            new BeginnerIsland { Visiting = true },
+            new Ethoria()
+        };
+
+        return areas;
+    }
+}
+
+public static class PlayerExtensions
+{
+    public static Player SetBeginningAreas(this Player player)
+    {
+        player.Areas.Add(new BeginnerIsland { Visiting = true });
+        player.Areas.Add(new Ethoria());
+        return player;
+    }
 }

@@ -7,15 +7,15 @@
     <p>Chest Cap: @Game.Player.Chest.ResourceCap Items</p>
 
     @foreach(var item in Game.Player.Chest.Resources)
-    {
-        <ResourceSummary Resource="item" />
-    }
+{
+    <ResourceSummary Resource="item" />
+}
 </div>
 
 
 @code {
-    protected override void OnInitialized()
-    {
-        Game.OnStateChanged = StateHasChanged;
-    }
+protected override void OnInitialized()
+{
+    Game.OnStateChanged = StateHasChanged;
+}
 }

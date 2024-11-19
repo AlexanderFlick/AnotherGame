@@ -3,24 +3,90 @@
 @rendermode InteractiveServer
 @inject NewGame Game
 
-<div class="card resource-gather" style="margin-top:40px; width:400px;">
-    <h4>@Resource.Name</h4>
-    <p>Gold Per Resource: @Resource.Value</p>
-    <p>Quantity Per Click: @Resource.QuantityPerClick</p>
-    <button style="width:100%;" class="btn btn-primary" @onclick="GatherResource">Gather</button>
+<div class="resource-card">
+    <div class="resource-card-inner">
+        <div class="resource-card-front">
+            <h4>@Resource.Name</h4>
+            <p>Gold Per Resource: <strong>@Resource.Value</strong></p>
+            <p>Quantity Per Click: <strong>@Resource.QuantityPerClick</strong></p>
+            
+        </div>
+        <div class="resource-card-back">
+            <h4>@Resource.Name</h4>
+            <button class="btn btn-primary" @onclick="GatherResource">Gather</button>
+        </div>
+    </div>
 </div>
 
 <style>
-    .resource-gather {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-left: 20px;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    padding-right: 20px;
-    text-align: center;
+    .resource-card {
+        perspective: 1000px; /* Enable 3D space for flip effect */
+        width: 300px;
+        height: 200px;
+        margin: 10px;
     }
+
+    .resource-card-inner {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 0.6s;
+    }
+
+    .resource-card:hover .resource-card-inner {
+        transform: rotateY(180deg);
+    }
+
+    .resource-card-front, .resource-card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        background: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    .resource-card-front {
+        background: linear-gradient(135deg, #a8edea, #fed6e3);
+    }
+
+    .resource-card-back {
+        background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+        transform: rotateY(180deg);
+    }
+
+    h4 {
+        margin: 0 0 10px;
+        font-size: 1.2rem;
+    }
+
+    p {
+        margin: 5px 0;
+        font-size: 1rem;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.3s;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
 </style>
 
 @code {
@@ -29,7 +95,7 @@
 
     public void GatherResource()
     {
-        if(Game.Player.Chest.Resources.Count < Game.Player.Chest.ResourceCap)
+        if (Game.Player.Chest.Resources.Count < Game.Player.Chest.ResourceCap)
         {
             Game.Player.Chest.Resources.Add(Resource);
             Game.OnStateChanged();
