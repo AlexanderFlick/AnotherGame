@@ -4,7 +4,7 @@ public class Wood : Resource
 {
     public Wood()
     {
-        Name = "Wood";
+        Name = "Oak Wood";
         Value = 1;
     }
 }

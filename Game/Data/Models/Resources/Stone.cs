@@ -4,7 +4,7 @@ public class Stone : Resource
 {
     public Stone()
     {
-        Name = "Stone";
+        Name = "Common Stone";
         Value = 2;
     }
 }

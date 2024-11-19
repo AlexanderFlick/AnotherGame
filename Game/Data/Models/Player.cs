@@ -34,7 +34,9 @@ public class Player
         var areas = new List<Area>
         {
             new BeginnerIsland { Visiting = true },
-            new Ethoria()
+            new Ethoria(),
+            new GlassOcean(),
+            new MawOfOblivion()
         };
 
         return areas;
