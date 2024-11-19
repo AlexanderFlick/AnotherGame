@@ -8,29 +8,29 @@
 
 <div class="area-container">
 	@foreach (var area in Game.Player.Areas)
-{
-	<div class="area-card">
+	{
+		<div class="area-card">
 			<div class="area-card-inner">
 				<div class="area-card-front">
 					<h3>@area.Name</h3>
 					<p>@AreaResourceDescription[area.Name]</p>
 					<p>@AreaCostToTravel[area.Name]</p>
-					
+
 				</div>
 				<div class="area-card-back">
 					@if (area.Visiting)
-				{
-					<button class="btn btn-primary disabled">Visiting!</button>
-				}
+					{
+						<button class="btn btn-primary disabled">Visiting!</button>
+					}
 					@if (!area.Visiting)
-				{
-					<button class="btn btn-primary" @onclick="() => TravelToArea(area)">Travel</button>
-				}
+					{
+						<button class="btn btn-primary" @onclick="() => TravelToArea(area)">Travel</button>
+					}
 				</div>
 			</div>
 		</div>
-	
-}
+
+	}
 </div>
 
 <style>
@@ -115,73 +115,73 @@
 </style>
 
 @code {
-private Dictionary<string, string> AreaResourceDescription { get; set; }
-private Dictionary<string, string> AreaCostToTravel { get; set; }
+	private Dictionary<string, string> AreaResourceDescription { get; set; }
+	private Dictionary<string, string> AreaCostToTravel { get; set; }
 
-protected override void OnInitialized()
-{
-	SetResourcesAvailableInArea();
-	SetCostToTravel();
-}
-
-private void SetCostToTravel()
-{
-	AreaCostToTravel = new();
-	var sb = new StringBuilder();
-
-	foreach (var area in Game.Player.Areas)
+	protected override void OnInitialized()
 	{
-		sb.Append("Cost to Travel: ");
-		sb.Append(SetCostDescription(area));
-		AreaCostToTravel.Add(area.Name, sb.ToString());
-		sb.Clear();
-	}
-}
-
-private string SetCostDescription(Area area)
-{
-	var sb = new StringBuilder();
-	var distinctAreaItems = area.CostToTravel.Select(x => x.Name).Distinct();
-
-	if (distinctAreaItems.Count() < 1)
-	{
-		return sb.Append("Free").ToString();
+		SetResourcesAvailableInArea();
+		SetCostToTravel();
 	}
 
-	var firstItem = true;
-	foreach (var distinctItem in distinctAreaItems)
+	private void SetCostToTravel()
 	{
-		var quantityOfItem = area.CostToTravel.Count(x => x.Name == distinctItem);
+		AreaCostToTravel = new();
+		var sb = new StringBuilder();
 
-		if (!firstItem) { sb.Append(","); }
-		sb.Append($" {quantityOfItem} {distinctItem}s");
-		firstItem = false;
-	}
-
-	return sb.ToString();
-}
-
-private void SetResourcesAvailableInArea()
-{
-	AreaResourceDescription = new();
-	var sb = new StringBuilder();
-
-	foreach (var area in Game.Player.Areas)
-	{
-		sb.Append("Resources at Island: ");
-		foreach (var resource in area.AvailableResources)
+		foreach (var area in Game.Player.Areas)
 		{
-			sb.Append($" {resource.Name};");
+			sb.Append("Cost to Travel: ");
+			sb.Append(SetCostDescription(area));
+			AreaCostToTravel.Add(area.Name, sb.ToString());
+			sb.Clear();
+		}
+	}
+
+	private string SetCostDescription(Area area)
+	{
+		var sb = new StringBuilder();
+		var distinctAreaItems = area.CostToTravel.Select(x => x.Name).Distinct();
+
+		if (distinctAreaItems.Count() < 1)
+		{
+			return sb.Append("Free").ToString();
 		}
 
-		AreaResourceDescription.Add(area.Name, sb.ToString());
-		sb.Clear();
-	}
-}
+		var firstItem = true;
+		foreach (var distinctItem in distinctAreaItems)
+		{
+			var quantityOfItem = area.CostToTravel.Count(x => x.Name == distinctItem);
 
-private void TravelToArea(Area area)
-{
-	Game.Player.Resources.Clear();
-	Game.Player.Resources = area.AvailableResources;
-}
+			if (!firstItem) { sb.Append(","); }
+			sb.Append($" {quantityOfItem} {distinctItem}s");
+			firstItem = false;
+		}
+
+		return sb.ToString();
+	}
+
+	private void SetResourcesAvailableInArea()
+	{
+		AreaResourceDescription = new();
+		var sb = new StringBuilder();
+
+		foreach (var area in Game.Player.Areas)
+		{
+			sb.Append("Resources at Island: ");
+			foreach (var resource in area.AvailableResources)
+			{
+				sb.Append($" {resource.Name};");
+			}
+
+			AreaResourceDescription.Add(area.Name, sb.ToString());
+			sb.Clear();
+		}
+	}
+
+	private void TravelToArea(Area area)
+	{
+		Game.Player.Resources.Clear();
+		Game.Player.Resources = area.AvailableResources;
+	}
 }

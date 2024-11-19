@@ -1,5 +1,4 @@
-﻿using Game.Components.Pages;
-using Game.Data.Models.Areas;
+﻿using Game.Data.Models.Areas;
 using Game.Data.Models.Resources;
 
 namespace Game.Data.Models;

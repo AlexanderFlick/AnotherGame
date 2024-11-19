@@ -4,20 +4,20 @@
 @inject NewGame Game
 
 <div style="text-align:center;">
-    <h2>Recipes</h2>
-    @foreach(var recipe in Game.Player.Recipes)
-    {
-        <CraftingResourceComponent ItemToCraft="recipe"/>
-    }
+	<h2>Recipes</h2>
+	@foreach (var recipe in Game.Player.Recipes)
+	{
+		<CraftingResourceComponent ItemToCraft="recipe" />
+	}
 
-    <br />
-    <ChestSummary />
+	<br />
+	<ChestSummary />
 </div>
 
 
 @code {
-    protected override void OnInitialized()
-    {
-        Game.OnStateChanged = StateHasChanged;
-    }
+	protected override void OnInitialized()
+	{
+		Game.OnStateChanged = StateHasChanged;
+	}
 }

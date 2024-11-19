@@ -10,9 +10,9 @@
 
 	<div class="carousel">
 		@foreach (var availableResource in Game.Player.Resources)
-	{
-		<ResourceGatheringComponent Resource="availableResource" />
-	}
+		{
+			<ResourceGatheringComponent Resource="availableResource" />
+		}
 	</div>
 </div>
 
@@ -40,8 +40,8 @@
 </style>
 
 @code {
-protected override void OnInitialized()
-{
-	Game.OnStateChanged = StateHasChanged;
-}
+	protected override void OnInitialized()
+	{
+		Game.OnStateChanged = StateHasChanged;
+	}
 }
